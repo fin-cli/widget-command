@@ -1,27 +1,27 @@
-Feature: Manage WordPress sidebars
+Feature: Manage FinPress sidebars
 
   Scenario: List available sidebars
-    Given a WP install
+    Given a FP install
 
-    When I try `wp theme delete twentytwelve --force`
-    And I run `wp theme install twentytwelve --activate`
+    When I try `fp theme delete twentytwelve --force`
+    And I run `fp theme install twentytwelve --activate`
     Then STDOUT should not be empty
 
-    When I run `wp sidebar list --fields=name,id`
+    When I run `fp sidebar list --fields=name,id`
     Then STDOUT should be a table containing rows:
       | name                          | id                  |
       | Main Sidebar                  | sidebar-1           |
       | First Front Page Widget Area  | sidebar-2           |
       | Second Front Page Widget Area | sidebar-3           |
-      | Inactive Widgets              | wp_inactive_widgets |
+      | Inactive Widgets              | fp_inactive_widgets |
 
-    When I run `wp sidebar list --format=ids`
+    When I run `fp sidebar list --format=ids`
     Then STDOUT should be:
       """
-      sidebar-1 sidebar-2 sidebar-3 wp_inactive_widgets
+      sidebar-1 sidebar-2 sidebar-3 fp_inactive_widgets
       """
 
-    When I run `wp sidebar list --format=count`
+    When I run `fp sidebar list --format=count`
     Then STDOUT should be:
       """
       4

@@ -1,22 +1,22 @@
 <?php
 
-use WP_CLI\Utils;
-use WP_CLI\Formatter;
+use FP_CLI\Utils;
+use FP_CLI\Formatter;
 
 /**
  * Lists registered sidebars.
  *
- * A [sidebar](https://developer.wordpress.org/themes/functionality/sidebars/) is any widgetized area of your theme.
+ * A [sidebar](https://developer.finpress.org/themes/functionality/sidebars/) is any widgetized area of your theme.
  *
  * ## EXAMPLES
  *
  *     # List sidebars
- *     $ wp sidebar list --fields=name,id --format=csv
+ *     $ fp sidebar list --fields=name,id --format=csv
  *     name,id
  *     "Widget Area",sidebar-1
- *     "Inactive Widgets",wp_inactive_widgets
+ *     "Inactive Widgets",fp_inactive_widgets
  */
-class Sidebar_Command extends WP_CLI_Command {
+class Sidebar_Command extends FP_CLI_Command {
 
 	private $fields = [
 		'name',
@@ -63,22 +63,22 @@ class Sidebar_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp sidebar list --fields=name,id --format=csv
+	 *     $ fp sidebar list --fields=name,id --format=csv
 	 *     name,id
 	 *     "Widget Area",sidebar-1
-	 *     "Inactive Widgets",wp_inactive_widgets
+	 *     "Inactive Widgets",fp_inactive_widgets
 	 *
 	 * @subcommand list
 	 */
 	public function list_( $args, $assoc_args ) {
-		global $wp_registered_sidebars;
+		global $fp_registered_sidebars;
 
-		Utils\wp_register_unused_sidebar();
+		Utils\fp_register_unused_sidebar();
 
 		if ( ! empty( $assoc_args['format'] ) && 'ids' === $assoc_args['format'] ) {
-			$sidebars = wp_list_pluck( $wp_registered_sidebars, 'id' );
+			$sidebars = fp_list_pluck( $fp_registered_sidebars, 'id' );
 		} else {
-			$sidebars = $wp_registered_sidebars;
+			$sidebars = $fp_registered_sidebars;
 		}
 
 		$formatter = new Formatter( $assoc_args, $this->fields );
