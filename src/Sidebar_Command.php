@@ -1,7 +1,7 @@
 <?php
 
-use FP_CLI\Utils;
-use FP_CLI\Formatter;
+use FIN_CLI\Utils;
+use FIN_CLI\Formatter;
 
 /**
  * Lists registered sidebars.
@@ -11,12 +11,12 @@ use FP_CLI\Formatter;
  * ## EXAMPLES
  *
  *     # List sidebars
- *     $ fp sidebar list --fields=name,id --format=csv
+ *     $ fin sidebar list --fields=name,id --format=csv
  *     name,id
  *     "Widget Area",sidebar-1
- *     "Inactive Widgets",fp_inactive_widgets
+ *     "Inactive Widgets",fin_inactive_widgets
  */
-class Sidebar_Command extends FP_CLI_Command {
+class Sidebar_Command extends FIN_CLI_Command {
 
 	private $fields = [
 		'name',
@@ -63,22 +63,22 @@ class Sidebar_Command extends FP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ fp sidebar list --fields=name,id --format=csv
+	 *     $ fin sidebar list --fields=name,id --format=csv
 	 *     name,id
 	 *     "Widget Area",sidebar-1
-	 *     "Inactive Widgets",fp_inactive_widgets
+	 *     "Inactive Widgets",fin_inactive_widgets
 	 *
 	 * @subcommand list
 	 */
 	public function list_( $args, $assoc_args ) {
-		global $fp_registered_sidebars;
+		global $fin_registered_sidebars;
 
-		Utils\fp_register_unused_sidebar();
+		Utils\fin_register_unused_sidebar();
 
 		if ( ! empty( $assoc_args['format'] ) && 'ids' === $assoc_args['format'] ) {
-			$sidebars = fp_list_pluck( $fp_registered_sidebars, 'id' );
+			$sidebars = fin_list_pluck( $fin_registered_sidebars, 'id' );
 		} else {
-			$sidebars = $fp_registered_sidebars;
+			$sidebars = $fin_registered_sidebars;
 		}
 
 		$formatter = new Formatter( $assoc_args, $this->fields );

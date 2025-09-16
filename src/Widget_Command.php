@@ -1,7 +1,7 @@
 <?php
 
-use FP_CLI\Utils;
-use FP_CLI\Formatter;
+use FIN_CLI\Utils;
+use FIN_CLI\Formatter;
 
 /**
  * Manages widgets, including adding and moving them within sidebars.
@@ -11,7 +11,7 @@ use FP_CLI\Formatter;
  * ## EXAMPLES
  *
  *     # List widgets on a given sidebar
- *     $ fp widget list sidebar-1
+ *     $ fin widget list sidebar-1
  *     +----------+------------+----------+----------------------+
  *     | name     | id         | position | options              |
  *     +----------+------------+----------+----------------------+
@@ -20,18 +20,18 @@ use FP_CLI\Formatter;
  *     +----------+------------+----------+----------------------+
  *
  *     # Add a calendar widget to the second position on the sidebar
- *     $ fp widget add calendar sidebar-1 2
+ *     $ fin widget add calendar sidebar-1 2
  *     Success: Added widget to sidebar.
  *
  *     # Update option(s) associated with a given widget
- *     $ fp widget update calendar-1 --title="Calendar"
+ *     $ fin widget update calendar-1 --title="Calendar"
  *     Success: Widget updated.
  *
  *     # Delete one or more widgets entirely
- *     $ fp widget delete calendar-2 archive-1
+ *     $ fin widget delete calendar-2 archive-1
  *     Success: 2 widgets removed from sidebar.
  */
-class Widget_Command extends FP_CLI_Command {
+class Widget_Command extends FIN_CLI_Command {
 
 	private $fields = [
 		'name',
@@ -77,7 +77,7 @@ class Widget_Command extends FP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ fp widget list sidebar-1 --fields=name,id --format=csv
+	 *     $ fin widget list sidebar-1 --fields=name,id --format=csv
 	 *     name,id
 	 *     meta,meta-5
 	 *     search,search-3
@@ -93,7 +93,7 @@ class Widget_Command extends FP_CLI_Command {
 		$output_widgets = $this->get_sidebar_widgets( $sidebar_id );
 
 		if ( ! empty( $assoc_args['format'] ) && 'ids' === $assoc_args['format'] ) {
-			$output_widgets = fp_list_pluck( $output_widgets, 'id' );
+			$output_widgets = fin_list_pluck( $output_widgets, 'id' );
 		}
 
 		$formatter = new Formatter( $assoc_args, $this->fields );
@@ -123,7 +123,7 @@ class Widget_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Add a new calendar widget to sidebar-1 with title "Calendar"
-	 *     $ fp widget add calendar sidebar-1 2 --title="Calendar"
+	 *     $ fin widget add calendar sidebar-1 2 --title="Calendar"
 	 *     Success: Added widget to sidebar.
 	 *
 	 * @subcommand add
@@ -139,7 +139,7 @@ class Widget_Command extends FP_CLI_Command {
 
 		$widget = $this->get_widget_obj( $name );
 		if ( false === $widget ) {
-			FP_CLI::error( 'Invalid widget type.' );
+			FIN_CLI::error( 'Invalid widget type.' );
 		}
 
 		/*
@@ -163,7 +163,7 @@ class Widget_Command extends FP_CLI_Command {
 		$widget_id = $name . '-' . $option_index;
 		$this->move_sidebar_widget( $widget_id, null, $sidebar_id, null, $position );
 
-		FP_CLI::success( 'Added widget to sidebar.' );
+		FIN_CLI::success( 'Added widget to sidebar.' );
 	}
 
 	/**
@@ -180,7 +180,7 @@ class Widget_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Change calendar-1 widget title to "Our Calendar"
-	 *     $ fp widget update calendar-1 --title="Our Calendar"
+	 *     $ fin widget update calendar-1 --title="Our Calendar"
 	 *     Success: Widget updated.
 	 *
 	 * @subcommand update
@@ -189,11 +189,11 @@ class Widget_Command extends FP_CLI_Command {
 
 		list( $widget_id ) = $args;
 		if ( ! $this->validate_sidebar_widget( $widget_id ) ) {
-			FP_CLI::error( "Widget doesn't exist." );
+			FIN_CLI::error( "Widget doesn't exist." );
 		}
 
 		if ( empty( $assoc_args ) ) {
-			FP_CLI::error( 'No options specified to update.' );
+			FIN_CLI::error( 'No options specified to update.' );
 		}
 
 		list( $name, $option_index ) = $this->get_widget_data( $widget_id );
@@ -203,7 +203,7 @@ class Widget_Command extends FP_CLI_Command {
 		$widget_options[ $option_index ] = array_merge( (array) $widget_options[ $option_index ], $clean_options );
 		$this->update_widget_options( $name, $widget_options );
 
-		FP_CLI::success( 'Widget updated.' );
+		FIN_CLI::success( 'Widget updated.' );
 	}
 
 	/**
@@ -226,11 +226,11 @@ class Widget_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Change position of widget
-	 *     $ fp widget move recent-comments-2 --position=2
+	 *     $ fin widget move recent-comments-2 --position=2
 	 *     Success: Widget moved.
 	 *
 	 *     # Move widget to Inactive Widgets
-	 *     $ fp widget move recent-comments-2 --sidebar-id=fp_inactive_widgets
+	 *     $ fin widget move recent-comments-2 --sidebar-id=fin_inactive_widgets
 	 *     Success: Widget moved.
 	 *
 	 * @subcommand move
@@ -239,11 +239,11 @@ class Widget_Command extends FP_CLI_Command {
 
 		list( $widget_id ) = $args;
 		if ( ! $this->validate_sidebar_widget( $widget_id ) ) {
-			FP_CLI::error( "Widget doesn't exist." );
+			FIN_CLI::error( "Widget doesn't exist." );
 		}
 
 		if ( empty( $assoc_args['position'] ) && empty( $assoc_args['sidebar-id'] ) ) {
-			FP_CLI::error( 'A new position or new sidebar must be specified.' );
+			FIN_CLI::error( 'A new position or new sidebar must be specified.' );
 		}
 
 		list( $name, $option_index, $current_sidebar_id, $current_sidebar_index ) = $this->get_widget_data( $widget_id );
@@ -260,7 +260,7 @@ class Widget_Command extends FP_CLI_Command {
 
 		$this->move_sidebar_widget( $widget_id, $current_sidebar_id, $new_sidebar_id, $current_sidebar_index, $new_sidebar_index );
 
-		FP_CLI::success( 'Widget moved.' );
+		FIN_CLI::success( 'Widget moved.' );
 	}
 
 	/**
@@ -276,7 +276,7 @@ class Widget_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Deactivate the recent-comments-2 widget.
-	 *     $ fp widget deactivate recent-comments-2
+	 *     $ fin widget deactivate recent-comments-2
 	 *     Success: 1 widget deactivated.
 	 *
 	 * @subcommand deactivate
@@ -288,23 +288,23 @@ class Widget_Command extends FP_CLI_Command {
 
 		foreach ( $args as $widget_id ) {
 			if ( ! $this->validate_sidebar_widget( $widget_id ) ) {
-				FP_CLI::warning( "Widget '{$widget_id}' doesn't exist." );
+				FIN_CLI::warning( "Widget '{$widget_id}' doesn't exist." );
 				++$errors;
 				continue;
 			}
 
 			list( $name, $option_index, $sidebar_id, $sidebar_index ) = $this->get_widget_data( $widget_id );
-			if ( 'fp_inactive_widgets' === $sidebar_id ) {
-				FP_CLI::warning( sprintf( "'%s' is already deactivated.", $widget_id ) );
+			if ( 'fin_inactive_widgets' === $sidebar_id ) {
+				FIN_CLI::warning( sprintf( "'%s' is already deactivated.", $widget_id ) );
 				continue;
 			}
 
 			$this->move_sidebar_widget(
 				$widget_id,
 				$sidebar_id,
-				'fp_inactive_widgets',
+				'fin_inactive_widgets',
 				$sidebar_index,
-				count( $this->get_sidebar_widgets( 'fp_inactive_widgets' ) )
+				count( $this->get_sidebar_widgets( 'fin_inactive_widgets' ) )
 			);
 
 			++$count;
@@ -325,7 +325,7 @@ class Widget_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Delete the recent-comments-2 widget from its sidebar.
-	 *     $ fp widget delete recent-comments-2
+	 *     $ fin widget delete recent-comments-2
 	 *     Success: Deleted 1 of 1 widgets.
 	 *
 	 * @subcommand delete
@@ -337,7 +337,7 @@ class Widget_Command extends FP_CLI_Command {
 
 		foreach ( $args as $widget_id ) {
 			if ( ! $this->validate_sidebar_widget( $widget_id ) ) {
-				FP_CLI::warning( "Widget '{$widget_id}' doesn't exist." );
+				FIN_CLI::warning( "Widget '{$widget_id}' doesn't exist." );
 				++$errors;
 				continue;
 			}
@@ -349,7 +349,7 @@ class Widget_Command extends FP_CLI_Command {
 			$this->update_widget_options( $name, $widget_options );
 
 			// Remove the widget from the sidebar.
-			$all_widgets = $this->fp_get_sidebars_widgets();
+			$all_widgets = $this->fin_get_sidebars_widgets();
 			unset( $all_widgets[ $sidebar_id ][ $sidebar_index ] );
 			$all_widgets[ $sidebar_id ] = array_values( $all_widgets[ $sidebar_id ] );
 			update_option( 'sidebars_widgets', $all_widgets );
@@ -376,58 +376,58 @@ class Widget_Command extends FP_CLI_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Reset a sidebar
-	 *     $ fp widget reset sidebar-1
+	 *     $ fin widget reset sidebar-1
 	 *     Success: Sidebar 'sidebar-1' reset.
 	 *
 	 *     # Reset multiple sidebars
-	 *     $ fp widget reset sidebar-1 sidebar-2
+	 *     $ fin widget reset sidebar-1 sidebar-2
 	 *     Success: Sidebar 'sidebar-1' reset.
 	 *     Success: Sidebar 'sidebar-2' reset.
 	 *
 	 *     # Reset all sidebars
-	 *     $ fp widget reset --all
+	 *     $ fin widget reset --all
 	 *     Success: Sidebar 'sidebar-1' reset.
 	 *     Success: Sidebar 'sidebar-2' reset.
 	 *     Success: Sidebar 'sidebar-3' reset.
 	 */
 	public function reset( $args, $assoc_args ) {
 
-		global $fp_registered_sidebars;
+		global $fin_registered_sidebars;
 
 		$all = Utils\get_flag_value( $assoc_args, 'all', false );
 
 		// Bail if no arguments and no all flag.
 		if ( ! $all && empty( $args ) ) {
-			FP_CLI::error( 'Please specify one or more sidebars, or use --all.' );
+			FIN_CLI::error( 'Please specify one or more sidebars, or use --all.' );
 		}
 
 		// Fetch all sidebars if all flag is set.
 		if ( $all ) {
-			$args = array_keys( $fp_registered_sidebars );
+			$args = array_keys( $fin_registered_sidebars );
 		}
 
-		// Sidebar ID fp_inactive_widgets is reserved by FP core for inactive widgets.
-		if ( isset( $args['fp_inactive_widgets'] ) ) {
-			unset( $args['fp_inactive_widgets'] );
+		// Sidebar ID fin_inactive_widgets is reserved by FIN core for inactive widgets.
+		if ( isset( $args['fin_inactive_widgets'] ) ) {
+			unset( $args['fin_inactive_widgets'] );
 		}
 
 		// Check if no registered sidebar.
 		if ( empty( $args ) ) {
-			FP_CLI::error( 'No sidebar registered.' );
+			FIN_CLI::error( 'No sidebar registered.' );
 		}
 
 		$count  = 0;
 		$errors = 0;
 		foreach ( $args as $sidebar_id ) {
-			if ( ! array_key_exists( $sidebar_id, $fp_registered_sidebars ) ) {
-				FP_CLI::warning( sprintf( 'Invalid sidebar: %s', $sidebar_id ) );
+			if ( ! array_key_exists( $sidebar_id, $fin_registered_sidebars ) ) {
+				FIN_CLI::warning( sprintf( 'Invalid sidebar: %s', $sidebar_id ) );
 				++$errors;
 				continue;
 			}
 
 			$widgets = $this->get_sidebar_widgets( $sidebar_id );
 			if ( empty( $widgets ) ) {
-				FP_CLI::warning( sprintf( "Sidebar '%s' is already empty.", $sidebar_id ) );
+				FIN_CLI::warning( sprintf( "Sidebar '%s' is already empty.", $sidebar_id ) );
 			} else {
 				foreach ( $widgets as $widget ) {
 					$widget_id = $widget->id;
@@ -435,12 +435,12 @@ class Widget_Command extends FP_CLI_Command {
 					$this->move_sidebar_widget(
 						$widget_id,
 						$new_sidebar_id,
-						'fp_inactive_widgets',
+						'fin_inactive_widgets',
 						$sidebar_index,
-						count( $this->get_sidebar_widgets( 'fp_inactive_widgets' ) )
+						count( $this->get_sidebar_widgets( 'fin_inactive_widgets' ) )
 					);
 				}
-				FP_CLI::log( sprintf( "Sidebar '%s' reset.", $sidebar_id ) );
+				FIN_CLI::log( sprintf( "Sidebar '%s' reset.", $sidebar_id ) );
 				++$count;
 			}
 		}
@@ -454,12 +454,12 @@ class Widget_Command extends FP_CLI_Command {
 	 * @param string $sidebar_id
 	 */
 	private function validate_sidebar( $sidebar_id ) {
-		global $fp_registered_sidebars;
+		global $fin_registered_sidebars;
 
-		Utils\fp_register_unused_sidebar();
+		Utils\fin_register_unused_sidebar();
 
-		if ( ! array_key_exists( $sidebar_id, $fp_registered_sidebars ) ) {
-			FP_CLI::error( 'Invalid sidebar.' );
+		if ( ! array_key_exists( $sidebar_id, $fin_registered_sidebars ) ) {
+			FIN_CLI::error( 'Invalid sidebar.' );
 		}
 	}
 
@@ -470,7 +470,7 @@ class Widget_Command extends FP_CLI_Command {
 	 */
 	private function validate_sidebar_widget( $widget_id ) {
 
-		$sidebars_widgets = $this->fp_get_sidebars_widgets();
+		$sidebars_widgets = $this->fin_get_sidebars_widgets();
 
 		$widget_exists = false;
 		foreach ( $sidebars_widgets as $sidebar_id => $widgets ) {
@@ -491,7 +491,7 @@ class Widget_Command extends FP_CLI_Command {
 	 */
 	private function get_sidebar_widgets( $sidebar_id ) {
 
-		$all_widgets = $this->fp_get_sidebars_widgets();
+		$all_widgets = $this->fin_get_sidebars_widgets();
 
 		if ( empty( $all_widgets[ $sidebar_id ] ) ) {
 			return array();
@@ -519,10 +519,10 @@ class Widget_Command extends FP_CLI_Command {
 	}
 
 	/**
-	 * Re-implementation of fp_get_sidebars_widgets()
+	 * Re-implementation of fin_get_sidebars_widgets()
 	 * because the original has a nasty global component
 	 */
-	private function fp_get_sidebars_widgets() {
+	private function fin_get_sidebars_widgets() {
 		$sidebars_widgets = get_option( 'sidebars_widgets', array() );
 
 		if ( is_array( $sidebars_widgets ) && isset( $sidebars_widgets['array_version'] ) ) {
@@ -546,7 +546,7 @@ class Widget_Command extends FP_CLI_Command {
 
 		$sidebar_id    = false;
 		$sidebar_index = false;
-		$all_widgets   = $this->fp_get_sidebars_widgets();
+		$all_widgets   = $this->fin_get_sidebars_widgets();
 		foreach ( $all_widgets as $s_id => &$widgets ) {
 
 			$key = array_search( $widget_id, $widgets, true );
@@ -591,7 +591,7 @@ class Widget_Command extends FP_CLI_Command {
 	 */
 	private function move_sidebar_widget( $widget_id, $current_sidebar_id, $new_sidebar_id, $current_index, $new_index ) {
 
-		$all_widgets     = $this->fp_get_sidebars_widgets();
+		$all_widgets     = $this->fin_get_sidebars_widgets();
 		$needs_placement = true;
 		// Existing widget
 		if ( $current_sidebar_id && ! is_null( $current_index ) ) {
@@ -629,12 +629,12 @@ class Widget_Command extends FP_CLI_Command {
 	 * Gets a widget's instantiated object based on its name
 	 *
 	 * @param string $id_base Name of the widget
-	 * @return FP_Widget|false
+	 * @return FIN_Widget|false
 	 */
 	private function get_widget_obj( $id_base ) {
-		global $fp_widget_factory;
+		global $fin_widget_factory;
 
-		$widget = fp_filter_object_list( $fp_widget_factory->widgets, array( 'id_base' => $id_base ) );
+		$widget = fin_filter_object_list( $fin_widget_factory->widgets, array( 'id_base' => $id_base ) );
 		if ( empty( $widget ) ) {
 			return false;
 		}

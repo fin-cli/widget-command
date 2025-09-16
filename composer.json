@@ -1,8 +1,8 @@
 {
-    "name": "fp-cli/widget-command",
-    "type": "fp-cli-package",
+    "name": "fin-cli/widget-command",
+    "type": "fin-cli-package",
     "description": "Adds, moves, and removes widgets; lists sidebars.",
-    "homepage": "https://github.com/fp-cli/widget-command",
+    "homepage": "https://github.com/fin-cli/widget-command",
     "license": "MIT",
     "authors": [
         {
@@ -12,11 +12,11 @@
         }
     ],
     "require": {
-        "fp-cli/fp-cli": "^2.12"
+        "fin-cli/fin-cli": "^2.12"
     },
     "require-dev": {
-        "fp-cli/extension-command": "^1.2 || ^2",
-        "fp-cli/fp-cli-tests": "^5"
+        "fin-cli/extension-command": "^1.2 || ^2",
+        "fin-cli/fin-cli-tests": "^5"
     },
     "config": {
         "process-timeout": 7200,
@@ -74,6 +74,6 @@
         ]
     },
     "support": {
-        "issues": "https://github.com/fp-cli/widget-command/issues"
+        "issues": "https://github.com/fin-cli/widget-command/issues"
     }
 }
